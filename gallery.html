@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Галерея</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo h2 {
+            font-size: 24px;
+        }
+        .menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+        .menu a:hover {
+            background: #555;
+        }
+        .menu a.active {
+            background: #4CAF50;
+        }
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .stats {
+            background: #e9ecef;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+        }
+        .stats span {
+            font-weight: bold;
+            background: #4CAF50;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-left: 5px;
+        }
+        .filters {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+        .filters button {
+            padding: 6px 16px;
+            margin-right: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .filters button.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .project {
+            background: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .project-cat {
+            font-size: 12px;
+            background: #4CAF50;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: 10px;
+        }
+        .like-btn {
+            padding: 4px 12px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo"><h2>Мой Сайт</h2></div>
+        <nav class="menu">
+            <a href="index.html">Главная</a>
+            <a href="gallery.html" class="active">Галерея</a>
+            <a href="kontakt.html">Контакты</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Галерея проектов</h1>
+        <div class="stats">
+            <div>Проектов: <span id="totalCount">0</span></div>
+            <div>Лайков: <span id="likesCount">0</span></div>
+        </div>
+        <div class="filters">
+            <button class="filter active" data-filter="all">Все</button>
+            <button class="filter" data-filter="web">Веб-сайты</button>
+            <button class="filter" data-filter="design">Дизайн</button>
+            <button class="filter" data-filter="app">Приложения</button>
+        </div>
+        <div class="project-list" id="projectList"></div>
+    </main>
+    <footer><p>© 2025 Мой Сайт</p></footer>
+
+    <script>
+        const projects = [
+            { id: 1, name: "Сайт-портфолио", cat: "web", likes: 12 },
+            { id: 2, name: "Лендинг компании", cat: "web", likes: 8 },
+            { id: 3, name: "Дизайн мобильного приложения", cat: "design", likes: 15 },
+            { id: 4, name: "Фирменный стиль", cat: "design", likes: 7 },
+            { id: 5, name: "Todo-приложение", cat: "app", likes: 23 },
+            { id: 6, name: "Чат-мессенджер", cat: "app", likes: 18 },
+            { id: 7, name: "Интернет-магазин", cat: "web", likes: 31 },
+            { id: 8, name: "Логотип и айдентика", cat: "design", likes: 9 }
+        ];
+        let currentFilter = "all";
+        function catName(cat) {
+            if (cat == "web") return "Веб-сайт";
+            if (cat == "design") return "Дизайн";
+            if (cat == "app") return "Приложение";
+            return cat;
+        }
+        function updateStats() {
+            let total = 0, allLikes = 0;
+            document.querySelectorAll('.project').forEach(item => {
+                total++;
+                let likeSpan = item.querySelector('.like-count');
+                if (likeSpan) allLikes += parseInt(likeSpan.innerText);
+            });
+            document.getElementById('totalCount').innerText = total;
+            document.getElementById('likesCount').innerText = allLikes;
+        }
+        function showProjects() {
+            let list = document.getElementById('projectList');
+            list.innerHTML = '';
+            for (let p of projects) {
+                if (currentFilter != "all" && p.cat != currentFilter) continue;
+                let div = document.createElement('div');
+                div.className = 'project';
+                div.innerHTML = `<div><span>${p.name}</span><span class="project-cat">${catName(p.cat)}</span></div><button class="like-btn" data-id="${p.id}">Лайк (<span class="like-count">${p.likes}</span>)</button>`;
+                list.appendChild(div);
+            }
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                btn.onclick = function() {
+                    let id = parseInt(this.dataset.id);
+                    let p = projects.find(p => p.id == id);
+                    if (p) {
+                        p.likes++;
+                        this.querySelector('.like-count').innerText = p.likes;
+                        updateStats();
+                    }
+                };
+            });
+            updateStats();
+        }
+        document.querySelectorAll('.filter').forEach(btn => {
+            btn.onclick = function() {
+                document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                showProjects();
+            };
+        });
+        showProjects();
+    </script>
+</body>
+</html>
